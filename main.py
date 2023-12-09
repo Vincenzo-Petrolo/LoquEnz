@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import terminal_interaction as ti
 import speech_recognition as sr
 import os
 
@@ -14,17 +15,18 @@ def recognize_speech():
         text = recognizer.recognize_google(audio)
         return text
     except sr.UnknownValueError:
-        return "Could not understand audio"
+        return None
     except sr.RequestError as e:
-        return f"Error with the speech recognition service: {e}"
+        return None 
 
 if __name__ == "__main__":
     while True:
-        input("Press Enter to start recognition...")
         transcription = recognize_speech()
-        
-        # Generate zsh command
-        zsh_command = f'shell-genie ask "{transcription}"'
-        
-        # Execute the zsh command
-        os.system(zsh_command)
+
+        if (transcription is not None):
+            if (transcription == "clear"):
+                os.system("^C") 
+            else:
+                # Generate zsh command
+                zsh_command = f'shell-genie ask "{transcription}"'
+                ti.send_to_terminal(zsh_command)
